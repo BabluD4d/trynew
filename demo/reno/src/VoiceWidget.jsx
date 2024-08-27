@@ -11,12 +11,7 @@ export default function VoiceWidget() {
   const [wordCount, setWordCount] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [spokenText, setSpokenText] = useState("");
-  const paragraph = ["americano",
-    "cappuccino",
-    "coffee",
-    "espresso",
-    "latte",
-    "mocha"]
+  const paragraph = ["americano","cappuccino","coffee","espresso","latte","mocha"]
   const words = paragraph;
   const currentWord = words[currentWordIndex] || "";
 
@@ -34,8 +29,6 @@ export default function VoiceWidget() {
   useEffect(() => {
     if (inference) {
       const spokenWord = inference.intent; // Adjust this based on your inference result
-
-
       console.log("Inference received:", inference); // Log the entire inference object
       const spokenWord1 = inference.intent || inference.transcript || ""; // Adjust this based on the actual inference structure
       console.log("Spoken Word:", spokenWord1);
@@ -43,15 +36,15 @@ export default function VoiceWidget() {
       if (spokenWord === currentWord) {
         setCurrentWordIndex(prevIndex => prevIndex + 1);
         setAttempts(0);
+        setWordCount(0)
       } else {
         if (inference?.slots?.beverage == currentWord) {
           if (currentWord) {
+            setWordCount(0)
             setCurrentWordIndex(prevIndex => prevIndex + 1)
             rhnProcess()
           }
         } else {
-          // alert()
-          setWordCount(prevIndex => prevIndex + 1)
           if (wordCount == 2) {
             setWordCount(0)
             wrongWordIndex.push(currentWordIndex)
@@ -63,6 +56,11 @@ export default function VoiceWidget() {
           } else {
             if (currentWord) {
               rhnProcess()
+              setWordCount(prevIndex => prevIndex + 1)
+            }
+            else{
+              setWordCount(0)
+              rhnInit()
             }
           }
         }
@@ -72,6 +70,7 @@ export default function VoiceWidget() {
         //   setAttempts(0);
         // }
       }
+      console.log({currentWord})
     }
   }, [inference, attempts, currentWord]);
 
@@ -106,7 +105,7 @@ export default function VoiceWidget() {
     <div className="voice-widget">
       <h2>VoiceWidget</h2>
       <h3>
-        <label>
+        {/* <label>
           AccessKey obtained from{" "}
           <a href="https://console.picovoice.ai/">Picovoice Console</a>:
           <input
@@ -115,7 +114,7 @@ export default function VoiceWidget() {
             onChange={(e) => setAccessKey(e.target.value)}
             disabled={isLoaded}
           />
-        </label>
+        </label> */}
         <button className="start-button" onClick={rhnInit} disabled={isLoaded || accessKey.length === 0}>
           Init Rhino
         </button>
@@ -141,16 +140,16 @@ export default function VoiceWidget() {
         Release
       </button>
 
-      <h3>Spoken Text:</h3>
-      <pre>{spokenText}</pre> {/* Display the spoken text */}
+      {/* <h3>Spoken Text:</h3>
+      <pre>{spokenText}</pre> Display the spoken text */}
 
       <h3>Current Word:</h3>
       <p>{currentWord}</p>
-      <h3>Inference:</h3>
+      {/* <h3>Inference:</h3>
       {inference && <pre>{JSON.stringify(inference, null, 2)}</pre>}
-      <hr />
-      <h3>Context Info:</h3>
-      <pre>{contextInfo}</pre>
+      <hr /> */}
+      {/* <h3>Context Info:</h3>
+      <pre>{contextInfo}</pre> */}
 
       <h3>Paragraph Status:</h3>
       <p>
